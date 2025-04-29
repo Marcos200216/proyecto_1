@@ -20,25 +20,30 @@ class TaskController extends Controller
     }
 
     public function store(Request $request, $projectId)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'user_ids' => 'required|array',
-        'user_ids.*' => 'exists:users,id',
-    ]);
-
-    $task = Task::create([
-        'name' => $request->name,
-        'description' => $request->description,
-        'status' => 'Pendiente',
-        'project_id' => $projectId,
-    ]);
-
-    $task->users()->sync($request->user_ids); 
-
-    return response()->json($task, 201);
-}
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
+            'status' => 'nullable|in:Pendiente,En progreso,Completada',  // Validar el estado
+        ]);
+    
+        // Usar el estado proporcionado o asignar 'Pendiente' por defecto si no se pasa un valor
+        $status = $request->status ?? 'Pendiente';
+    
+        $task = Task::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $status,  // Asignar el estado recibido o 'Pendiente' por defecto
+            'project_id' => $projectId,
+        ]);
+    
+        $task->users()->sync($request->user_ids); 
+    
+        return response()->json($task, 201);
+    }
+    
 
 
     public function show($id)
