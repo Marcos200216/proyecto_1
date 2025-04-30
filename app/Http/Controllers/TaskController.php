@@ -19,20 +19,6 @@ class TaskController extends Controller
         return response()->json($query->get());
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function store(Request $request, $projectId)
     {
         $request->validate([
@@ -57,18 +43,12 @@ class TaskController extends Controller
     
         return response()->json($task, 201);
     }
-    
-
 
     public function show($id)
     {
         $task = Task::with('users')->findOrFail($id);
         return response()->json($task);
     }
-
-
-
-
 
     public function update(Request $request, $id)
     {
@@ -95,17 +75,17 @@ class TaskController extends Controller
         Task::destroy($id);
         return response()->json(['message' => 'Task deleted successfully']);
     }
+
     public function addUsersToTask(Request $request, $taskId)
-{
-    $request->validate([
-        'user_ids' => 'required|array',
-        'user_ids.*' => 'exists:users,id',
-    ]);
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
+        ]);
 
-    $task = Task::findOrFail($taskId);
-    $task->users()->attach($request->user_ids); 
+        $task = Task::findOrFail($taskId);
+        $task->users()->attach($request->user_ids); 
 
-    return response()->json(['message' => 'Usuarios agregados correctamente', 'task' => $task->load('users')]);
-}
-
+        return response()->json(['message' => 'Usuarios agregados correctamente', 'task' => $task->load('users')]);
+    }
 }
