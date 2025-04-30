@@ -10,7 +10,7 @@ class TaskController extends Controller
 {
     public function index(Request $request, $projectId)
     {
-        $query = Task::where('project_id', $projectId);
+        $query = Task::with('users')->where('project_id', $projectId);
 
         if ($request->has('status')) {
             $query->where('status', $request->status);
@@ -18,6 +18,20 @@ class TaskController extends Controller
 
         return response()->json($query->get());
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function store(Request $request, $projectId)
     {
@@ -48,9 +62,13 @@ class TaskController extends Controller
 
     public function show($id)
     {
-        $task = Task::findOrFail($id);
+        $task = Task::with('users')->findOrFail($id);
         return response()->json($task);
     }
+
+
+
+
 
     public function update(Request $request, $id)
     {
