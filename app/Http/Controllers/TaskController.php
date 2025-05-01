@@ -77,15 +77,16 @@ class TaskController extends Controller
     }
 
     public function addUsersToTask(Request $request, $taskId)
-    {
-        $request->validate([
-            'user_ids' => 'required|array',
-            'user_ids.*' => 'exists:users,id',
-        ]);
+{
+    $request->validate([
+        'user_ids' => 'required|array',
+        'user_ids.*' => 'exists:users,id',
+    ]);
 
-        $task = Task::findOrFail($taskId);
-        $task->users()->attach($request->user_ids); 
+    $task = Task::findOrFail($taskId);
+    $task->users()->sync($request->user_ids); // Reemplaza todos los usuarios asignados
 
-        return response()->json(['message' => 'Usuarios agregados correctamente', 'task' => $task->load('users')]);
-    }
+    return response()->json(['message' => 'Usuarios asignados correctamente', 'task' => $task->load('users')]);
+}
+
 }
