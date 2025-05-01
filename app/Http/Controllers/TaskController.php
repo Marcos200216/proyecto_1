@@ -84,7 +84,8 @@ class TaskController extends Controller
     ]);
 
     $task = Task::findOrFail($taskId);
-    $task->users()->sync($request->user_ids); // Reemplaza todos los usuarios asignados
+    $task->users()->syncWithoutDetaching($request->user_ids);
+
 
     return response()->json(['message' => 'Usuarios asignados correctamente', 'task' => $task->load('users')]);
 }
